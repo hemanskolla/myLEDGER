@@ -2,7 +2,7 @@
 import express from 'express';
 import dotenv from 'dotenv';
 dotenv.config({
-    path: './server/.env' // Since .env file not in root
+    path: './app/server/.env'
 });
 
 const PORT = process.env.PORT; // Define the port
