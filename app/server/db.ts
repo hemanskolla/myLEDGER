@@ -1,6 +1,6 @@
 import { MongoClient, Db } from 'mongodb';
 
-let _db: Db;
+let _db!: Db;
 
 export async function connect() {
   const uri = process.env.MONGODB_URI;
@@ -8,7 +8,7 @@ export async function connect() {
 
   const client = new MongoClient(uri);
   await client.connect();
-  _db = client.db();
+  _db = client.db(process.env.DB_NAME ?? 'ledger-db');
 
   await _db.collection('categories').createIndex({ name: 1 }, { unique: true });
 }
