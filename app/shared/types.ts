@@ -17,6 +17,9 @@ export interface Contact {
   role: string | null;
   company: string | null;
   where_met: string | null;
+  linkedin: string | null;
+  email: string | null;
+  phone: string | null;
   category_id: string;
   created_at: string;
   updated_at: string;

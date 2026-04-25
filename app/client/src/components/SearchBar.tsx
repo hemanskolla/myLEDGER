@@ -6,7 +6,6 @@ interface Props {
 export default function SearchBar({ value, onChange }: Props) {
   return (
     <div className="search-bar">
-      <span className="search-icon">🔍</span>
       <input
         type="search"
         className="search-input"
