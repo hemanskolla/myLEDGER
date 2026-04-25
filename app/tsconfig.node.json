@@ -22,5 +22,5 @@
     "noFallthroughCasesInSwitch": true,
     "noUncheckedSideEffectImports": true
   },
-  "include": ["client/vite.config.ts"]
+  "include": ["client/vite.config.ts", "server/**/*.ts", "shared/**/*.ts"]
 }
