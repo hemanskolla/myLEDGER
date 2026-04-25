@@ -5,7 +5,7 @@ interface Props {
   name: string;
   contacts: ContactWithNotes[];
   onEdit: (contact: ContactWithNotes) => void;
-  onDelete: (id: number) => void;
+  onDelete: (id: string) => void;
 }
 
 export default function CategorySection({ name, contacts, onEdit, onDelete }: Props) {

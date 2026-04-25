@@ -13,7 +13,7 @@ export default function CrmPage() {
   const [contacts, setContacts] = useState<ContactWithNotes[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
   const [search, setSearch] = useState('');
-  const [activeFilter, setActiveFilter] = useState<number | null>(null);
+  const [activeFilter, setActiveFilter] = useState<string | null>(null);
   const [modal, setModal] = useState<Modal>('none');
   const [editing, setEditing] = useState<ContactWithNotes | null>(null);
 
@@ -42,7 +42,7 @@ export default function CrmPage() {
   }, [contacts, search, activeFilter]);
 
   const grouped = useMemo(() => {
-    const map = new Map<number, ContactWithNotes[]>();
+    const map = new Map<string, ContactWithNotes[]>();
     for (const c of filtered) {
       if (!map.has(c.category_id)) map.set(c.category_id, []);
       map.get(c.category_id)!.push(c);
@@ -50,7 +50,7 @@ export default function CrmPage() {
     return map;
   }, [filtered]);
 
-  async function handleDelete(id: number) {
+  async function handleDelete(id: string) {
     if (!confirm('Delete this contact?')) return;
     await fetch(`/api/contacts/${id}`, { method: 'DELETE' });
     void reload();

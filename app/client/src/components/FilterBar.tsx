@@ -2,8 +2,8 @@ import type { Category } from '@shared/types';
 
 interface Props {
   categories: Category[];
-  active: number | null;
-  onSelect: (id: number | null) => void;
+  active: string | null;
+  onSelect: (id: string | null) => void;
 }
 
 export default function FilterBar({ categories, active, onSelect }: Props) {
