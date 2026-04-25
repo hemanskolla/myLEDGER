@@ -3,14 +3,14 @@ import dotenv from 'dotenv';
 import path from 'path';
 import { fileURLToPath } from 'url';
 
-dotenv.config({ path: './server/.env' });
+dotenv.config({ path: './.env' });
 
 import './db.js';
 import categoryRoutes from './routes/categoryRoutes.js';
 import contactRoutes from './routes/contactRoutes.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
-const PORT = process.env.PORT ?? 3000;
+const PORT = process.env.SERVER_PORT ?? 8000;
 const app = express();
 
 app.use(express.json());
