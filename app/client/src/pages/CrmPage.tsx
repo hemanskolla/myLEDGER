@@ -1,7 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 import type { Category, ContactWithNotes } from '@shared/types';
-import { useAuth } from '../context/AuthContext';
 import SearchBar from '../components/SearchBar';
 import FilterBar from '../components/FilterBar';
 import CategorySection from '../components/CategorySection';
@@ -12,8 +10,6 @@ import AddContactModal from '../components/AddContactModal';
 type Modal = 'none' | 'category' | 'contact';
 
 export default function CrmPage() {
-  const { user, logout } = useAuth();
-  const navigate = useNavigate();
   const [contacts, setContacts] = useState<ContactWithNotes[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
   const [search, setSearch] = useState('');
@@ -65,23 +61,10 @@ export default function CrmPage() {
     setModal('contact');
   }
 
-  async function handleLogout() {
-    await logout();
-    navigate('/', { replace: true });
-  }
-
   return (
     <div className="crm-layout">
       <header className="crm-header">
         <span className="crm-logo">myLEDGER</span>
-        <div className="crm-header-right">
-          {user && (
-            <>
-              <img src={user.picture} alt={user.name} className="avatar" referrerPolicy="no-referrer" />
-              <button className="btn btn--ghost btn--sm" onClick={handleLogout}>Sign out</button>
-            </>
-          )}
-        </div>
       </header>
 
       <div className="crm-toolbar">

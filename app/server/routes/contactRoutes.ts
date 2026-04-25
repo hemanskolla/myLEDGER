@@ -1,10 +1,8 @@
 import { Router } from 'express';
 import { db } from '../db.js';
-import { requireAuth } from '../auth.js';
 import type { ContactWithNotes } from '../../shared/types.js';
 
 const router = Router();
-router.use(requireAuth);
 
 type ContactRow = {
   id: number;
