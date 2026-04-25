@@ -1,5 +1,6 @@
 import express from 'express';
 import dotenv from 'dotenv';
+import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
 
@@ -18,12 +19,24 @@ app.use(express.json());
 app.use('/api/categories', categoryRoutes);
 app.use('/api/contacts', contactRoutes);
 
-// Serve the Vite build in production
+// Serve the Vite build if it exists
 const distPath = path.join(__dirname, '../client/dist');
-app.use(express.static(distPath));
-app.get(/^(?!\/api).*$/, (_req, res) => {
-  res.sendFile(path.join(distPath, 'index.html'));
-});
+const indexHtml = path.join(distPath, 'index.html');
+
+if (fs.existsSync(indexHtml)) {
+  app.use(express.static(distPath));
+  app.get(/^(?!\/api).*$/, (_req, res) => {
+    res.sendFile(indexHtml);
+  });
+} else {
+  app.get('/', (_req, res) => {
+    res.status(503).send(
+      '<h2>Client not built</h2>' +
+      '<p>Run <code>npm run build</code> in the <code>app/</code> directory, then restart the server.</p>' +
+      '<p>For development with hot reload, use <code>npm run start</code> instead.</p>'
+    );
+  });
+}
 
 app.listen(PORT, () => {
   console.log(`Server is running on http://localhost:${PORT}`);
