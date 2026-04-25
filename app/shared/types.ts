@@ -1,23 +1,23 @@
 export interface Category {
-  id: number;
+  id: string;
   name: string;
   created_at: string;
 }
 
 export interface Note {
-  id: number;
-  contact_id: number;
+  id: string;
+  contact_id: string;
   body: string;
   position: number;
 }
 
 export interface Contact {
-  id: number;
+  id: string;
   name: string;
   role: string | null;
   company: string | null;
   where_met: string | null;
-  category_id: number;
+  category_id: string;
   created_at: string;
   updated_at: string;
 }

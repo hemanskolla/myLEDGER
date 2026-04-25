@@ -13,14 +13,14 @@ export default function AddContactModal({ categories, editing, onClose, onSucces
   const [role, setRole] = useState(editing?.role ?? '');
   const [company, setCompany] = useState(editing?.company ?? '');
   const [whereMet, setWhereMet] = useState(editing?.where_met ?? '');
-  const [categoryId, setCategoryId] = useState<number | ''>(editing?.category_id ?? '');
+  const [categoryId, setCategoryId] = useState<string>(editing?.category_id ?? '');
   const [notes, setNotes] = useState(editing?.notes.map((n) => n.body).join('\n') ?? '');
   const [error, setError] = useState('');
   const [saving, setSaving] = useState(false);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    if (!name.trim() || categoryId === '') return;
+    if (!name.trim() || !categoryId) return;
     setSaving(true);
 
     const payload = {
@@ -78,7 +78,7 @@ export default function AddContactModal({ categories, editing, onClose, onSucces
               <select
                 className="modal-input"
                 value={categoryId}
-                onChange={(e) => setCategoryId(Number(e.target.value))}
+                onChange={(e) => setCategoryId(e.target.value)}
                 required
               >
                 <option value="">— select —</option>
