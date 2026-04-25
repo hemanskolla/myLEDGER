@@ -1,39 +1,18 @@
-import Database from 'better-sqlite3';
-import path from 'path';
-import { fileURLToPath } from 'url';
+import { MongoClient, Db } from 'mongodb';
 
-const __dirname = path.dirname(fileURLToPath(import.meta.url));
-const dbPath = process.env.DB_PATH
-  ? path.resolve(__dirname, '..', process.env.DB_PATH)
-  : path.resolve(__dirname, 'crm.db');
+let _db: Db;
 
-export const db = new Database(dbPath);
+export async function connect() {
+  const uri = process.env.MONGODB_URI;
+  if (!uri) throw new Error('MONGODB_URI is not set in .env');
 
-db.pragma('journal_mode = WAL');
-db.pragma('foreign_keys = ON');
+  const client = new MongoClient(uri);
+  await client.connect();
+  _db = client.db();
 
-db.exec(`
-  CREATE TABLE IF NOT EXISTS categories (
-    id         INTEGER PRIMARY KEY AUTOINCREMENT,
-    name       TEXT    NOT NULL UNIQUE,
-    created_at TEXT    NOT NULL DEFAULT (strftime('%Y-%m-%dT%H:%M:%fZ','now'))
-  );
+  await _db.collection('categories').createIndex({ name: 1 }, { unique: true });
+}
 
-  CREATE TABLE IF NOT EXISTS contacts (
-    id          INTEGER PRIMARY KEY AUTOINCREMENT,
-    name        TEXT    NOT NULL,
-    role        TEXT,
-    company     TEXT,
-    where_met   TEXT,
-    category_id INTEGER NOT NULL REFERENCES categories(id) ON DELETE RESTRICT,
-    created_at  TEXT    NOT NULL DEFAULT (strftime('%Y-%m-%dT%H:%M:%fZ','now')),
-    updated_at  TEXT    NOT NULL DEFAULT (strftime('%Y-%m-%dT%H:%M:%fZ','now'))
-  );
-
-  CREATE TABLE IF NOT EXISTS notes (
-    id         INTEGER PRIMARY KEY AUTOINCREMENT,
-    contact_id INTEGER NOT NULL REFERENCES contacts(id) ON DELETE CASCADE,
-    body       TEXT    NOT NULL,
-    position   INTEGER NOT NULL DEFAULT 0
-  );
-`);
+export function getDb(): Db {
+  return _db;
+}

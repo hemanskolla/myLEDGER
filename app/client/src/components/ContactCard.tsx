@@ -3,7 +3,7 @@ import type { ContactWithNotes } from '@shared/types';
 interface Props {
   contact: ContactWithNotes;
   onEdit: (contact: ContactWithNotes) => void;
-  onDelete: (id: number) => void;
+  onDelete: (id: string) => void;
 }
 
 export default function ContactCard({ contact, onEdit, onDelete }: Props) {
