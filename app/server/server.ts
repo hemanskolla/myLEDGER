@@ -19,7 +19,6 @@ app.use(express.json());
 app.use('/api/categories', categoryRoutes);
 app.use('/api/contacts', contactRoutes);
 
-// Serve the Vite build if it exists
 const distPath = path.join(__dirname, '../client/dist');
 const indexHtml = path.join(distPath, 'index.html');
 
