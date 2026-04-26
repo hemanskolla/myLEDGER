@@ -100,9 +100,15 @@ export default function AddContactModal({ categories, editing, onClose, onSucces
                 required
               >
                 <option value="">— select —</option>
-                {categories.map((c) => (
-                  <option key={c.id} value={c.id}>{c.name}</option>
-                ))}
+                {[...categories]
+                  .sort((a, b) => {
+                    if (a.name === 'Other') return 1;
+                    if (b.name === 'Other') return -1;
+                    return 0;
+                  })
+                  .map((c) => (
+                    <option key={c.id} value={c.id}>{c.name}</option>
+                  ))}
               </select>
             </label>
           </div>
