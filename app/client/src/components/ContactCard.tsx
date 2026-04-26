@@ -8,7 +8,7 @@ interface Props {
 
 export default function ContactCard({ contact, onEdit, onDelete }: Props) {
   return (
-    <div className="contact-card">
+    <div className={`contact-card${contact.status === 'potential' ? ' contact-card--potential' : ''}`}>
       <div className="card-header">
         <div>
           <h3 className="card-name">{contact.name}</h3>

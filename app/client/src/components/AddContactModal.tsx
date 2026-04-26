@@ -17,6 +17,7 @@ export default function AddContactModal({ categories, editing, onClose, onSucces
   const [email, setEmail] = useState(editing?.email ?? '');
   const [phone, setPhone] = useState(editing?.phone ?? '');
   const [categoryId, setCategoryId] = useState<string>(editing?.category_id ?? '');
+  const [status, setStatus] = useState<'actual' | 'potential'>(editing?.status ?? 'actual');
   const [notes, setNotes] = useState(editing?.notes.map((n) => n.body).join('\n') ?? '');
   const [error, setError] = useState('');
   const [saving, setSaving] = useState(false);
@@ -35,6 +36,7 @@ export default function AddContactModal({ categories, editing, onClose, onSucces
       email: email.trim() || undefined,
       phone: phone.trim() || undefined,
       category_id: categoryId,
+      status,
       notes: notes.split('\n').filter((l) => l.trim()),
     };
 
@@ -109,6 +111,17 @@ export default function AddContactModal({ categories, editing, onClose, onSucces
                   .map((c) => (
                     <option key={c.id} value={c.id}>{c.name}</option>
                   ))}
+              </select>
+            </label>
+            <label className="modal-label">
+              Status
+              <select
+                className="modal-input"
+                value={status}
+                onChange={(e) => setStatus(e.target.value as 'actual' | 'potential')}
+              >
+                <option value="actual">Actual</option>
+                <option value="potential">Potential</option>
               </select>
             </label>
           </div>
