@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import { ObjectId } from 'mongodb';
-import { getDb } from '../db.js';
+import { getDb, OTHER_CATEGORY_ID } from '../db.js';
 import type { ContactWithNotes } from '../../shared/types.js';
 
 const router = Router();
@@ -45,14 +45,18 @@ router.post('/', async (req, res) => {
     category_id?: string; notes?: string[];
   };
 
-  if (!name?.trim() || !category_id) {
-    res.status(400).json({ error: 'name and category_id are required' });
+  if (!name?.trim()) {
+    res.status(400).json({ error: 'name is required' });
     return;
   }
 
   let catOid: ObjectId;
-  try { catOid = new ObjectId(category_id); }
-  catch { res.status(400).json({ error: 'Invalid category_id' }); return; }
+  if (category_id) {
+    try { catOid = new ObjectId(category_id); }
+    catch { res.status(400).json({ error: 'Invalid category_id' }); return; }
+  } else {
+    catOid = OTHER_CATEGORY_ID;
+  }
 
   const now = new Date().toISOString();
   const result = await getDb().collection('contacts').insertOne({

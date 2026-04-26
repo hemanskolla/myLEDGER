@@ -1,6 +1,8 @@
-import { MongoClient, Db } from 'mongodb';
+import { MongoClient, Db, ObjectId } from 'mongodb';
 
 let _db!: Db;
+
+export const OTHER_CATEGORY_ID = new ObjectId('69ed71237ba869aee9620036');
 
 export async function connect() {
   const uri = process.env.MONGODB_URI;
