@@ -156,6 +156,23 @@ a { text-decoration: none; color: inherit; }
   border-bottom: 2px solid var(--border-color);
 }
 
+/* ── Status sub-groups ── */
+.status-group { margin-bottom: 1.5rem; }
+.status-subheading {
+  font-size: .65rem;
+  font-weight: 700;
+  letter-spacing: .07em;
+  text-transform: uppercase;
+  color: var(--primary-color);
+  margin-bottom: .6rem;
+}
+.status-empty {
+  font-size: .8rem;
+  color: var(--primary-color);
+  font-style: italic;
+  padding: .25rem 0;
+}
+
 /* ── Card grid ── */
 .card-grid {
   display: grid;
@@ -176,6 +193,7 @@ a { text-decoration: none; color: inherit; }
   border: 1px solid var(--border-color);
 }
 .contact-card:hover { box-shadow: 0 4px 16px rgba(0,0,0,.1); border-color: var(--primary-color); }
+.contact-card--potential { background: #f5f3f7; }
 .card-header { display: flex; justify-content: space-between; align-items: flex-start; gap: .5rem; }
 .card-name { font-size: 1rem; font-weight: 600; color: var(--dark-color); }
 .card-subtitle { font-size: .8rem; color: var(--secondary-color); margin-top: .15rem; }
@@ -322,6 +340,14 @@ a { text-decoration: none; color: inherit; }
   letter-spacing: .04em;
 }
 .modal-label--full { grid-column: 1 / -1; }
+.modal-label--checkbox {
+  flex-direction: row;
+  align-items: center;
+  gap: .5rem;
+  cursor: pointer;
+  align-self: end;
+  padding-bottom: .55rem;
+}
 .modal-input {
   padding: .55rem .75rem;
   border: 1.5px solid var(--border-color);

@@ -21,6 +21,7 @@ export interface Contact {
   email: string | null;
   phone: string | null;
   category_id: string;
+  status: 'actual' | 'potential';
   created_at: string;
   updated_at: string;
 }
