@@ -7,6 +7,11 @@ interface Props {
 }
 
 export default function FilterBar({ categories, active, onSelect }: Props) {
+  const sorted = [...categories].sort((a, b) => {
+    if (a.name === 'Other') return 1;
+    if (b.name === 'Other') return -1;
+    return 0;
+  });
   return (
     <div className="filter-bar">
       <button
@@ -15,7 +20,7 @@ export default function FilterBar({ categories, active, onSelect }: Props) {
       >
         All
       </button>
-      {categories.map((cat) => (
+      {sorted.map((cat) => (
         <button
           key={cat.id}
           className={`filter-btn${active === cat.id ? ' filter-btn--active' : ''}`}
