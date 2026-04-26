@@ -69,7 +69,19 @@ export default function CrmPage() {
 
       <div className="crm-toolbar">
         <SearchBar value={search} onChange={setSearch} />
-        <FilterBar categories={categories} active={activeFilter} onSelect={setActiveFilter} />
+        <FilterBar
+          categories={categories}
+          active={activeFilter}
+          onSelect={setActiveFilter}
+          onReorder={(newOrder) => {
+            setCategories(newOrder);
+            void fetch('/api/categories/order', {
+              method: 'PUT',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ order: newOrder.map((c) => c.id) }),
+            });
+          }}
+        />
       </div>
 
       <main className="crm-main">
