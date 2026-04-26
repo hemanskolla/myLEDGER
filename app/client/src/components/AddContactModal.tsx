@@ -113,16 +113,13 @@ export default function AddContactModal({ categories, editing, onClose, onSucces
                   ))}
               </select>
             </label>
-            <label className="modal-label">
-              Status
-              <select
-                className="modal-input"
-                value={status}
-                onChange={(e) => setStatus(e.target.value as 'actual' | 'potential')}
-              >
-                <option value="actual">Actual</option>
-                <option value="potential">Potential</option>
-              </select>
+            <label className="modal-label modal-label--checkbox">
+              <input
+                type="checkbox"
+                checked={status === 'potential'}
+                onChange={(e) => setStatus(e.target.checked ? 'potential' : 'actual')}
+              />
+              Potential
             </label>
           </div>
           <label className="modal-label modal-label--full">
