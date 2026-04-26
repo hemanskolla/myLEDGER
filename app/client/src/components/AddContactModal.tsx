@@ -13,6 +13,9 @@ export default function AddContactModal({ categories, editing, onClose, onSucces
   const [role, setRole] = useState(editing?.role ?? '');
   const [company, setCompany] = useState(editing?.company ?? '');
   const [whereMet, setWhereMet] = useState(editing?.where_met ?? '');
+  const [linkedin, setLinkedin] = useState(editing?.linkedin ?? '');
+  const [email, setEmail] = useState(editing?.email ?? '');
+  const [phone, setPhone] = useState(editing?.phone ?? '');
   const [categoryId, setCategoryId] = useState<string>(editing?.category_id ?? '');
   const [notes, setNotes] = useState(editing?.notes.map((n) => n.body).join('\n') ?? '');
   const [error, setError] = useState('');
@@ -28,6 +31,9 @@ export default function AddContactModal({ categories, editing, onClose, onSucces
       role: role.trim() || undefined,
       company: company.trim() || undefined,
       where_met: whereMet.trim() || undefined,
+      linkedin: linkedin.trim() || undefined,
+      email: email.trim() || undefined,
+      phone: phone.trim() || undefined,
       category_id: categoryId,
       notes: notes.split('\n').filter((l) => l.trim()),
     };
@@ -72,6 +78,18 @@ export default function AddContactModal({ categories, editing, onClose, onSucces
             <label className="modal-label">
               Where met
               <input className="modal-input" type="text" value={whereMet} onChange={(e) => setWhereMet(e.target.value)} />
+            </label>
+            <label className="modal-label">
+              LinkedIn
+              <input className="modal-input" type="text" value={linkedin} onChange={(e) => setLinkedin(e.target.value)} placeholder="linkedin.com/in/…" />
+            </label>
+            <label className="modal-label">
+              Email
+              <input className="modal-input" type="email" value={email} onChange={(e) => setEmail(e.target.value)} />
+            </label>
+            <label className="modal-label">
+              Phone
+              <input className="modal-input" type="tel" value={phone} onChange={(e) => setPhone(e.target.value)} />
             </label>
             <label className="modal-label">
               Category *

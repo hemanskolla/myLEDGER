@@ -12,6 +12,9 @@ function toContact(doc: Record<string, any>): ContactWithNotes {
     role: doc.role ?? null,
     company: doc.company ?? null,
     where_met: doc.where_met ?? null,
+    linkedin: doc.linkedin ?? null,
+    email: doc.email ?? null,
+    phone: doc.phone ?? null,
     category_id: doc.category_id.toString(),
     created_at: doc.created_at,
     updated_at: doc.updated_at,
@@ -36,9 +39,10 @@ router.get('/', async (_req, res) => {
 });
 
 router.post('/', async (req, res) => {
-  const { name, role, company, where_met, category_id, notes } = req.body as {
+  const { name, role, company, where_met, linkedin, email, phone, category_id, notes } = req.body as {
     name?: string; role?: string; company?: string;
-    where_met?: string; category_id?: string; notes?: string[];
+    where_met?: string; linkedin?: string; email?: string; phone?: string;
+    category_id?: string; notes?: string[];
   };
 
   if (!name?.trim() || !category_id) {
@@ -56,6 +60,9 @@ router.post('/', async (req, res) => {
     role: role?.trim() || null,
     company: company?.trim() || null,
     where_met: where_met?.trim() || null,
+    linkedin: linkedin?.trim() || null,
+    email: email?.trim() || null,
+    phone: phone?.trim() || null,
     category_id: catOid,
     notes: parseNotes(notes ?? []),
     created_at: now,
@@ -71,9 +78,10 @@ router.put('/:id', async (req, res) => {
   try { oid = new ObjectId(req.params['id']); }
   catch { res.status(404).json({ error: 'Not found' }); return; }
 
-  const { name, role, company, where_met, category_id, notes } = req.body as {
+  const { name, role, company, where_met, linkedin, email, phone, category_id, notes } = req.body as {
     name?: string; role?: string; company?: string;
-    where_met?: string; category_id?: string; notes?: string[];
+    where_met?: string; linkedin?: string; email?: string; phone?: string;
+    category_id?: string; notes?: string[];
   };
 
   if (!name?.trim() || !category_id) {
@@ -93,6 +101,9 @@ router.put('/:id', async (req, res) => {
         role: role?.trim() || null,
         company: company?.trim() || null,
         where_met: where_met?.trim() || null,
+        linkedin: linkedin?.trim() || null,
+        email: email?.trim() || null,
+        phone: phone?.trim() || null,
         category_id: catOid,
         notes: parseNotes(notes ?? []),
         updated_at: new Date().toISOString(),
