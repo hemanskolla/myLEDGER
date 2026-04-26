@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import { ObjectId } from 'mongodb';
-import { getDb, getOtherId } from '../db.js';
+import { getDb, OTHER_CATEGORY_ID } from '../db.js';
 import type { ContactWithNotes } from '../../shared/types.js';
 
 const router = Router();
@@ -55,7 +55,7 @@ router.post('/', async (req, res) => {
     try { catOid = new ObjectId(category_id); }
     catch { res.status(400).json({ error: 'Invalid category_id' }); return; }
   } else {
-    catOid = getOtherId();
+    catOid = OTHER_CATEGORY_ID;
   }
 
   const now = new Date().toISOString();
