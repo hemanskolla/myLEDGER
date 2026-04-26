@@ -16,6 +16,7 @@ function toContact(doc: Record<string, any>): ContactWithNotes {
     email: doc.email ?? null,
     phone: doc.phone ?? null,
     category_id: doc.category_id.toString(),
+    status: doc.status === 'potential' ? 'potential' : 'actual',
     created_at: doc.created_at,
     updated_at: doc.updated_at,
     notes: (doc.notes ?? []).map((n: Record<string, any>) => ({
@@ -39,10 +40,10 @@ router.get('/', async (_req, res) => {
 });
 
 router.post('/', async (req, res) => {
-  const { name, role, company, where_met, linkedin, email, phone, category_id, notes } = req.body as {
+  const { name, role, company, where_met, linkedin, email, phone, category_id, status, notes } = req.body as {
     name?: string; role?: string; company?: string;
     where_met?: string; linkedin?: string; email?: string; phone?: string;
-    category_id?: string; notes?: string[];
+    category_id?: string; status?: string; notes?: string[];
   };
 
   if (!name?.trim()) {
@@ -68,6 +69,7 @@ router.post('/', async (req, res) => {
     email: email?.trim() || null,
     phone: phone?.trim() || null,
     category_id: catOid,
+    status: status === 'potential' ? 'potential' : 'actual',
     notes: parseNotes(notes ?? []),
     created_at: now,
     updated_at: now,
@@ -82,10 +84,10 @@ router.put('/:id', async (req, res) => {
   try { oid = new ObjectId(req.params['id']); }
   catch { res.status(404).json({ error: 'Not found' }); return; }
 
-  const { name, role, company, where_met, linkedin, email, phone, category_id, notes } = req.body as {
+  const { name, role, company, where_met, linkedin, email, phone, category_id, status, notes } = req.body as {
     name?: string; role?: string; company?: string;
     where_met?: string; linkedin?: string; email?: string; phone?: string;
-    category_id?: string; notes?: string[];
+    category_id?: string; status?: string; notes?: string[];
   };
 
   if (!name?.trim() || !category_id) {
@@ -109,6 +111,7 @@ router.put('/:id', async (req, res) => {
         email: email?.trim() || null,
         phone: phone?.trim() || null,
         category_id: catOid,
+        status: status === 'potential' ? 'potential' : 'actual',
         notes: parseNotes(notes ?? []),
         updated_at: new Date().toISOString(),
       },

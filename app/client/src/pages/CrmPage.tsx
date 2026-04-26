@@ -17,13 +17,17 @@ export default function CrmPage() {
   const [modal, setModal] = useState<Modal>('none');
   const [editing, setEditing] = useState<ContactWithNotes | null>(null);
 
-  async function reload() {
-    const [cs, cats] = await Promise.all([
-      fetch('/api/contacts').then((r) => r.json() as Promise<ContactWithNotes[]>),
-      fetch('/api/categories').then((r) => r.json() as Promise<Category[]>),
-    ]);
-    setContacts(cs);
-    setCategories(cats);
+  async function reload(retries = 8): Promise<void> {
+    try {
+      const [cs, cats] = await Promise.all([
+        fetch('/api/contacts').then((r) => { if (!r.ok) throw new Error(String(r.status)); return r.json() as Promise<ContactWithNotes[]>; }),
+        fetch('/api/categories').then((r) => { if (!r.ok) throw new Error(String(r.status)); return r.json() as Promise<Category[]>; }),
+      ]);
+      setContacts(cs);
+      setCategories(cats);
+    } catch {
+      if (retries > 0) setTimeout(() => void reload(retries - 1), 1000);
+    }
   }
 
   useEffect(() => { void reload(); }, []);

@@ -17,6 +17,7 @@ export default function AddContactModal({ categories, editing, onClose, onSucces
   const [email, setEmail] = useState(editing?.email ?? '');
   const [phone, setPhone] = useState(editing?.phone ?? '');
   const [categoryId, setCategoryId] = useState<string>(editing?.category_id ?? '');
+  const [status, setStatus] = useState<'actual' | 'potential'>(editing?.status ?? 'actual');
   const [notes, setNotes] = useState(editing?.notes.map((n) => n.body).join('\n') ?? '');
   const [error, setError] = useState('');
   const [saving, setSaving] = useState(false);
@@ -35,6 +36,7 @@ export default function AddContactModal({ categories, editing, onClose, onSucces
       email: email.trim() || undefined,
       phone: phone.trim() || undefined,
       category_id: categoryId,
+      status,
       notes: notes.split('\n').filter((l) => l.trim()),
     };
 
@@ -100,10 +102,24 @@ export default function AddContactModal({ categories, editing, onClose, onSucces
                 required
               >
                 <option value="">— select —</option>
-                {categories.map((c) => (
-                  <option key={c.id} value={c.id}>{c.name}</option>
-                ))}
+                {[...categories]
+                  .sort((a, b) => {
+                    if (a.name === 'Other') return 1;
+                    if (b.name === 'Other') return -1;
+                    return 0;
+                  })
+                  .map((c) => (
+                    <option key={c.id} value={c.id}>{c.name}</option>
+                  ))}
               </select>
+            </label>
+            <label className="modal-label modal-label--checkbox">
+              <input
+                type="checkbox"
+                checked={status === 'potential'}
+                onChange={(e) => setStatus(e.target.checked ? 'potential' : 'actual')}
+              />
+              Potential
             </label>
           </div>
           <label className="modal-label modal-label--full">
