@@ -13,7 +13,7 @@ export default function CrmPage() {
   const [contacts, setContacts] = useState<ContactWithNotes[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
   const [search, setSearch] = useState('');
-  const [activeFilter, setActiveFilter] = useState<string | null>(null);
+  const [activeFilters, setActiveFilters] = useState<Set<string>>(new Set());
   const [modal, setModal] = useState<Modal>('none');
   const [editing, setEditing] = useState<ContactWithNotes | null>(null);
 
@@ -32,6 +32,14 @@ export default function CrmPage() {
 
   useEffect(() => { void reload(); }, []);
 
+  function handleFilterToggle(id: string) {
+    setActiveFilters((prev) => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id); else next.add(id);
+      return next;
+    });
+  }
+
   const filtered = useMemo(() => {
     const q = search.toLowerCase();
     return contacts.filter((c) => {
@@ -40,10 +48,11 @@ export default function CrmPage() {
         c.name.toLowerCase().includes(q) ||
         (c.company ?? '').toLowerCase().includes(q) ||
         (c.role ?? '').toLowerCase().includes(q);
-      const matchFilter = activeFilter === null || c.category_ids.includes(activeFilter);
+      const matchFilter =
+        activeFilters.size === 0 || c.category_ids.some((id) => activeFilters.has(id));
       return matchSearch && matchFilter;
     });
-  }, [contacts, search, activeFilter]);
+  }, [contacts, search, activeFilters]);
 
   const grouped = useMemo(() => {
     const map = new Map<string, ContactWithNotes[]>();
@@ -77,8 +86,9 @@ export default function CrmPage() {
         <SearchBar value={search} onChange={setSearch} />
         <FilterBar
           categories={categories}
-          active={activeFilter}
-          onSelect={setActiveFilter}
+          activeFilters={activeFilters}
+          onToggle={handleFilterToggle}
+          onClearAll={() => setActiveFilters(new Set())}
           onReorder={(newOrder) => {
             setCategories(newOrder);
             void fetch('/api/categories/order', {
@@ -92,7 +102,7 @@ export default function CrmPage() {
 
       <main className="crm-main">
         {categories
-          .filter((cat) => grouped.has(cat.id))
+          .filter((cat) => grouped.has(cat.id) && (activeFilters.size === 0 || activeFilters.has(cat.id)))
           .map((cat) => (
             <CategorySection
               key={cat.id}
