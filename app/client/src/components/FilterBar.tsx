@@ -18,19 +18,20 @@ import type { Category } from '@shared/types';
 
 interface Props {
   categories: Category[];
-  active: string | null;
-  onSelect: (id: string | null) => void;
+  activeFilters: Set<string>;
+  onToggle: (id: string) => void;
+  onClearAll: () => void;
   onReorder: (newOrder: Category[]) => void;
 }
 
 interface SortableBtnProps {
   cat: Category;
-  active: string | null;
+  isActive: boolean;
   editMode: boolean;
-  onSelect: (id: string | null) => void;
+  onToggle: () => void;
 }
 
-function SortableFilterBtn({ cat, active, editMode, onSelect }: SortableBtnProps) {
+function SortableFilterBtn({ cat, isActive, editMode, onToggle }: SortableBtnProps) {
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } =
     useSortable({ id: cat.id });
 
@@ -46,10 +47,10 @@ function SortableFilterBtn({ cat, active, editMode, onSelect }: SortableBtnProps
       style={style}
       className={[
         'filter-btn',
-        active === cat.id && !editMode ? 'filter-btn--active' : '',
+        isActive && !editMode ? 'filter-btn--active' : '',
         editMode ? 'filter-btn--draggable' : '',
       ].filter(Boolean).join(' ')}
-      onClick={editMode ? undefined : () => onSelect(cat.id)}
+      onClick={editMode ? undefined : onToggle}
       {...(editMode ? { ...attributes, ...listeners } : {})}
     >
       {cat.name}
@@ -57,7 +58,7 @@ function SortableFilterBtn({ cat, active, editMode, onSelect }: SortableBtnProps
   );
 }
 
-export default function FilterBar({ categories, active, onSelect, onReorder }: Props) {
+export default function FilterBar({ categories, activeFilters, onToggle, onClearAll, onReorder }: Props) {
   const [editMode, setEditMode] = useState(false);
 
   const sensors = useSensors(useSensor(PointerSensor, {
@@ -72,16 +73,14 @@ export default function FilterBar({ categories, active, onSelect, onReorder }: P
     onReorder(arrayMove(categories, oldIdx, newIdx));
   }
 
-  function handleEditToggle() {
-    setEditMode((e) => !e);
-  }
+  const allOn = activeFilters.size === 0;
 
   return (
     <div className="filter-bar">
       {!editMode && (
         <button
-          className={`filter-btn${active === null ? ' filter-btn--active' : ''}`}
-          onClick={() => onSelect(null)}
+          className={`filter-btn${allOn ? ' filter-btn--active' : ''}`}
+          onClick={onClearAll}
         >
           All
         </button>
@@ -93,9 +92,9 @@ export default function FilterBar({ categories, active, onSelect, onReorder }: P
             <SortableFilterBtn
               key={cat.id}
               cat={cat}
-              active={active}
+              isActive={activeFilters.has(cat.id)}
               editMode={editMode}
-              onSelect={onSelect}
+              onToggle={() => onToggle(cat.id)}
             />
           ))}
         </SortableContext>
@@ -103,7 +102,7 @@ export default function FilterBar({ categories, active, onSelect, onReorder }: P
 
       <button
         className={`filter-btn filter-btn--edit-toggle${editMode ? ' filter-btn--edit-toggle-active' : ''}`}
-        onClick={handleEditToggle}
+        onClick={() => setEditMode((e) => !e)}
       >
         {editMode ? 'Done' : 'Edit'}
       </button>
