@@ -102,7 +102,7 @@ export default function CrmPage() {
 
       <main className="crm-main">
         {categories
-          .filter((cat) => activeFilters.size === 0 || activeFilters.has(cat.id))
+          .filter((cat) => (activeFilters.size === 0 || activeFilters.has(cat.id)) && (!search || grouped.has(cat.id)))
           .map((cat) => (
             <CategorySection
               key={cat.id}
