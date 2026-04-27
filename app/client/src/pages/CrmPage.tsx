@@ -102,21 +102,19 @@ export default function CrmPage() {
 
       <main className="crm-main">
         {categories
-          .filter((cat) => grouped.has(cat.id) && (activeFilters.size === 0 || activeFilters.has(cat.id)))
+          .filter((cat) => activeFilters.size === 0 || activeFilters.has(cat.id))
           .map((cat) => (
             <CategorySection
               key={cat.id}
               name={cat.name}
-              contacts={grouped.get(cat.id)!}
+              contacts={grouped.get(cat.id) ?? []}
               onEdit={handleEdit}
               onDelete={handleDelete}
             />
           ))}
-        {filtered.length === 0 && (
+        {categories.length === 0 && (
           <div className="empty-state">
-            {contacts.length === 0
-              ? 'No contacts yet. Hit + to add your first one.'
-              : 'No contacts match your search.'}
+            {'No contacts yet. Hit + to add your first one.'}
           </div>
         )}
       </main>
