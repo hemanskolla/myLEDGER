@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import { ObjectId } from 'mongodb';
-import { getDb } from '../db.js';
+import { getDb, OTHER_CATEGORY_ID } from '../db.js';
 
 const router = Router();
 
@@ -11,17 +11,28 @@ router.get('/', async (_req, res) => {
     col.find({ type: { $exists: false } }).toArray(),
   ]);
 
+  const otherId = OTHER_CATEGORY_ID.toString();
+  const isOther = (id: string) => id === otherId;
+
   if (orderDoc?.order?.length) {
     const idxMap = new Map<string, number>(
       (orderDoc.order as ObjectId[]).map((id, i) => [id.toString(), i])
     );
     docs.sort((a, b) => {
-      const ai = idxMap.get(a._id.toString()) ?? Infinity;
-      const bi = idxMap.get(b._id.toString()) ?? Infinity;
+      const aId = a._id.toString();
+      const bId = b._id.toString();
+      if (isOther(aId) !== isOther(bId)) return isOther(aId) ? 1 : -1;
+      const ai = idxMap.get(aId) ?? Infinity;
+      const bi = idxMap.get(bId) ?? Infinity;
       return ai !== bi ? ai - bi : a.name.localeCompare(b.name);
     });
   } else {
-    docs.sort((a, b) => a.name.localeCompare(b.name));
+    docs.sort((a, b) => {
+      const aId = a._id.toString();
+      const bId = b._id.toString();
+      if (isOther(aId) !== isOther(bId)) return isOther(aId) ? 1 : -1;
+      return a.name.localeCompare(b.name);
+    });
   }
 
   res.json(docs.map((d) => ({ id: d._id.toString(), name: d.name, created_at: d.created_at })));
