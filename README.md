@@ -1,16 +1,11 @@
 # myLEDGER
 _A Linked Entity Data & Governance Engine for Relationships_
 
-myLEDGER is a private, self-hosted relationship CRM built to help you track the people in your network — organized by category, filtered by status, and accessible only to you via Google sign-in.
+myLEDGER is a private, self-hosted relationship CRM built to help you track the people in your network — organized by category and filtered by status.
 
 ---
 
 ## Features
-
-### Authentication
-- Sign in with Google OAuth — no password required
-- Access is restricted to authorized accounts; unauthorized attempts are blocked with a clear error message
-- Session state is managed server-side; the client checks `/api/auth/me` on load and redirects unauthenticated users to the landing page
 
 ### Contact Management
 Each contact stores:
@@ -58,7 +53,6 @@ A `+` button fixed to the bottom-right of the screen expands into two options:
 | Drag & Drop | @dnd-kit/core, @dnd-kit/sortable |
 | Backend | Express 5, Node.js, TypeScript (tsx) |
 | Database | MongoDB |
-| Auth | Google OAuth |
 
 ---
 
@@ -95,15 +89,12 @@ id, name, created_at
 | POST | `/api/contacts` | Create a new contact |
 | PUT | `/api/contacts/:id` | Update an existing contact |
 | DELETE | `/api/contacts/:id` | Delete a contact |
-| GET | `/api/auth/me` | Return the current authenticated user |
-| GET | `/api/auth/login` | Initiate Google OAuth login |
-| POST | `/api/auth/logout` | Log out the current user |
 
 ---
 
 ## Running Locally
 
-1. Copy `.env.example` to `.env` and fill in `MONGODB_URI`, `DB_NAME`, and your Google OAuth credentials.
+1. Copy `.env.example` to `.env` and fill in `MONGODB_URI` and `DB_NAME`.
 2. Install dependencies:
    ```bash
    cd app && npm install
