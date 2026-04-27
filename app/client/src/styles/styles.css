@@ -367,6 +367,39 @@ a { text-decoration: none; color: inherit; }
 }
 .modal-input:focus { border-color: var(--accent-color); box-shadow: 0 0 0 3px rgba(187,10,33,.1); }
 .modal-textarea { resize: vertical; min-height: 90px; }
+
+/* ── Category multi-select ── */
+.category-checkbox-list {
+  display: flex;
+  flex-direction: column;
+  gap: .35rem;
+  max-height: 140px;
+  overflow-y: auto;
+  border: 1.5px solid var(--border-color);
+  border-radius: 6px;
+  padding: .5rem .75rem;
+  background: var(--white);
+  margin-top: .3rem;
+}
+.category-checkbox-item {
+  display: flex;
+  align-items: center;
+  gap: .5rem;
+  font-size: .875rem;
+  font-weight: 400;
+  text-transform: none;
+  letter-spacing: 0;
+  color: var(--dark-color);
+  cursor: pointer;
+  padding: .1rem 0;
+}
+.category-checkbox-item input[type="checkbox"] {
+  width: 14px;
+  height: 14px;
+  accent-color: var(--accent-color);
+  cursor: pointer;
+  flex-shrink: 0;
+}
 .modal-error { font-size: .825rem; color: var(--accent-color); background: rgba(187,10,33,.08); padding: .4rem .65rem; border-radius: 5px; }
 .modal-footer { display: flex; justify-content: flex-end; gap: .6rem; margin-top: .25rem; }
 

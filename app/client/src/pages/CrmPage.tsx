@@ -40,7 +40,7 @@ export default function CrmPage() {
         c.name.toLowerCase().includes(q) ||
         (c.company ?? '').toLowerCase().includes(q) ||
         (c.role ?? '').toLowerCase().includes(q);
-      const matchFilter = activeFilter === null || c.category_id === activeFilter;
+      const matchFilter = activeFilter === null || c.category_ids.includes(activeFilter);
       return matchSearch && matchFilter;
     });
   }, [contacts, search, activeFilter]);
@@ -48,8 +48,10 @@ export default function CrmPage() {
   const grouped = useMemo(() => {
     const map = new Map<string, ContactWithNotes[]>();
     for (const c of filtered) {
-      if (!map.has(c.category_id)) map.set(c.category_id, []);
-      map.get(c.category_id)!.push(c);
+      for (const catId of c.category_ids) {
+        if (!map.has(catId)) map.set(catId, []);
+        map.get(catId)!.push(c);
+      }
     }
     return map;
   }, [filtered]);

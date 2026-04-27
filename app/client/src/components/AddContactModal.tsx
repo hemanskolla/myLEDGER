@@ -16,15 +16,22 @@ export default function AddContactModal({ categories, editing, onClose, onSucces
   const [linkedin, setLinkedin] = useState(editing?.linkedin ?? '');
   const [email, setEmail] = useState(editing?.email ?? '');
   const [phone, setPhone] = useState(editing?.phone ?? '');
-  const [categoryId, setCategoryId] = useState<string>(editing?.category_id ?? '');
+  const [categoryIds, setCategoryIds] = useState<string[]>(editing?.category_ids ?? []);
   const [status, setStatus] = useState<'actual' | 'potential'>(editing?.status ?? 'actual');
   const [notes, setNotes] = useState(editing?.notes.map((n) => n.body).join('\n') ?? '');
   const [error, setError] = useState('');
   const [saving, setSaving] = useState(false);
 
+  function toggleCategory(id: string, checked: boolean) {
+    setCategoryIds(checked ? [...categoryIds, id] : categoryIds.filter((c) => c !== id));
+  }
+
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    if (!name.trim() || !categoryId) return;
+    if (!name.trim() || categoryIds.length === 0) {
+      setError('Name and at least one category are required.');
+      return;
+    }
     setSaving(true);
 
     const payload = {
@@ -35,7 +42,7 @@ export default function AddContactModal({ categories, editing, onClose, onSucces
       linkedin: linkedin.trim() || undefined,
       email: email.trim() || undefined,
       phone: phone.trim() || undefined,
-      category_id: categoryId,
+      category_ids: categoryIds,
       status,
       notes: notes.split('\n').filter((l) => l.trim()),
     };
@@ -58,6 +65,12 @@ export default function AddContactModal({ categories, editing, onClose, onSucces
       setError(data.error ?? 'Failed to save');
     }
   }
+
+  const sortedCategories = [...categories].sort((a, b) => {
+    if (a.name === 'Other') return 1;
+    if (b.name === 'Other') return -1;
+    return 0;
+  });
 
   return (
     <div className="modal-backdrop" onClick={onClose}>
@@ -93,26 +106,6 @@ export default function AddContactModal({ categories, editing, onClose, onSucces
               Phone
               <input className="modal-input" type="tel" value={phone} onChange={(e) => setPhone(e.target.value)} />
             </label>
-            <label className="modal-label">
-              Category *
-              <select
-                className="modal-input"
-                value={categoryId}
-                onChange={(e) => setCategoryId(e.target.value)}
-                required
-              >
-                <option value="">— select —</option>
-                {[...categories]
-                  .sort((a, b) => {
-                    if (a.name === 'Other') return 1;
-                    if (b.name === 'Other') return -1;
-                    return 0;
-                  })
-                  .map((c) => (
-                    <option key={c.id} value={c.id}>{c.name}</option>
-                  ))}
-              </select>
-            </label>
             <label className="modal-label modal-label--checkbox">
               <input
                 type="checkbox"
@@ -122,7 +115,22 @@ export default function AddContactModal({ categories, editing, onClose, onSucces
               Potential
             </label>
           </div>
-          <label className="modal-label modal-label--full">
+          <div className="modal-label modal-label--full" style={{ marginTop: '.75rem' }}>
+            <span>Categories *</span>
+            <div className="category-checkbox-list">
+              {sortedCategories.map((c) => (
+                <label key={c.id} className="category-checkbox-item">
+                  <input
+                    type="checkbox"
+                    checked={categoryIds.includes(c.id)}
+                    onChange={(e) => toggleCategory(c.id, e.target.checked)}
+                  />
+                  {c.name}
+                </label>
+              ))}
+            </div>
+          </div>
+          <label className="modal-label modal-label--full" style={{ marginTop: '.75rem' }}>
             Notes (one bullet per line)
             <textarea
               className="modal-input modal-textarea"
