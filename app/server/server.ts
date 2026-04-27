@@ -6,9 +6,8 @@ import { connect } from './db.js';
 import categoryRoutes from './routes/categoryRoutes.js';
 import contactRoutes from './routes/contactRoutes.js';
 
-dotenv.config({ path: './.env' });
-
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
+dotenv.config({ path: path.resolve(__dirname, '../.env') });
 const PORT = process.env.SERVER_PORT ?? 8000;
 const app = express();
 
