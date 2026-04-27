@@ -5,8 +5,9 @@
   "type": "module",
   "scripts": {
     "start:client": "vite --config client/vite.config.ts",
+    "start:client:wait": "wait-on http://localhost:8000 && npm run start:client",
     "start:server": "tsx server/server.ts",
-    "start": "concurrently -n server,client \"npm run start:server\" \"wait-on http://localhost:8000 && npm run start:client\"",
+    "start": "concurrently -n server,client \"npm run start:server\" \"npm run start:client:wait\"",
     "build": "tsc -b && vite build --config client/vite.config.ts",
     "lint": "eslint .",
     "preview": "vite preview --config client/vite.config.ts"
