@@ -139,6 +139,8 @@ a { text-decoration: none; color: inherit; }
 }
 .filter-btn:hover { border-color: var(--accent-color); color: var(--accent-color); }
 .filter-btn--active { background: var(--accent-color); border-color: var(--accent-color); color: var(--white); }
+.filter-btn--active:hover { color: var(--white); }
+.filter-btn--active:focus-visible { outline: none; box-shadow: 0 0 0 2px var(--white), 0 0 0 4px var(--accent-color); }
 .filter-btn--draggable { cursor: grab; border-style: dashed; }
 .filter-btn--draggable:active { cursor: grabbing; }
 .filter-btn--edit-toggle { border-color: transparent; color: var(--primary-color); opacity: .6; }
