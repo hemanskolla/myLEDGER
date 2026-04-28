@@ -20,8 +20,7 @@ export interface Contact {
   linkedin: string | null;
   email: string | null;
   phone: string | null;
-  category_ids: string[];
-  status: 'actual' | 'potential';
+  categories: { id: string; status: 'actual' | 'potential' }[];
   created_at: string;
   updated_at: string;
 }

@@ -1,16 +1,21 @@
 import type { ContactWithNotes } from '@shared/types';
 import ContactCard from './ContactCard';
 
+interface Entry {
+  contact: ContactWithNotes;
+  status: 'actual' | 'potential';
+}
+
 interface Props {
   name: string;
-  contacts: ContactWithNotes[];
+  entries: Entry[];
   onEdit: (contact: ContactWithNotes) => void;
   onDelete: (id: string) => void;
 }
 
-export default function CategorySection({ name, contacts, onEdit, onDelete }: Props) {
-  const actual = contacts.filter((c) => c.status !== 'potential');
-  const potential = contacts.filter((c) => c.status === 'potential');
+export default function CategorySection({ name, entries, onEdit, onDelete }: Props) {
+  const actual = entries.filter((e) => e.status !== 'potential');
+  const potential = entries.filter((e) => e.status === 'potential');
 
   return (
     <section className="category-section">
@@ -20,8 +25,8 @@ export default function CategorySection({ name, contacts, onEdit, onDelete }: Pr
         <h3 className="status-subheading">Actual</h3>
         {actual.length > 0 ? (
           <div className="card-grid">
-            {actual.map((c) => (
-              <ContactCard key={c.id} contact={c} onEdit={onEdit} onDelete={onDelete} />
+            {actual.map((e) => (
+              <ContactCard key={e.contact.id} contact={e.contact} status={e.status} onEdit={onEdit} onDelete={onDelete} />
             ))}
           </div>
         ) : (
@@ -33,8 +38,8 @@ export default function CategorySection({ name, contacts, onEdit, onDelete }: Pr
         <h3 className="status-subheading">Potential</h3>
         {potential.length > 0 ? (
           <div className="card-grid">
-            {potential.map((c) => (
-              <ContactCard key={c.id} contact={c} onEdit={onEdit} onDelete={onDelete} />
+            {potential.map((e) => (
+              <ContactCard key={e.contact.id} contact={e.contact} status={e.status} onEdit={onEdit} onDelete={onDelete} />
             ))}
           </div>
         ) : (

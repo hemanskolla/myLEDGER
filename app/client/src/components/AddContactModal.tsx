@@ -16,19 +16,28 @@ export default function AddContactModal({ categories, editing, onClose, onSucces
   const [linkedin, setLinkedin] = useState(editing?.linkedin ?? '');
   const [email, setEmail] = useState(editing?.email ?? '');
   const [phone, setPhone] = useState(editing?.phone ?? '');
-  const [categoryIds, setCategoryIds] = useState<string[]>(editing?.category_ids ?? []);
-  const [status, setStatus] = useState<'actual' | 'potential'>(editing?.status ?? 'actual');
+  const [selected, setSelected] = useState<{ id: string; status: 'actual' | 'potential' }[]>(
+    editing?.categories ?? []
+  );
   const [notes, setNotes] = useState(editing?.notes.map((n) => n.body).join('\n') ?? '');
   const [error, setError] = useState('');
   const [saving, setSaving] = useState(false);
 
   function toggleCategory(id: string, checked: boolean) {
-    setCategoryIds(checked ? [...categoryIds, id] : categoryIds.filter((c) => c !== id));
+    if (checked) {
+      setSelected((prev) => [...prev, { id, status: 'actual' }]);
+    } else {
+      setSelected((prev) => prev.filter((c) => c.id !== id));
+    }
+  }
+
+  function setCategoryStatus(id: string, status: 'actual' | 'potential') {
+    setSelected((prev) => prev.map((c) => c.id === id ? { ...c, status } : c));
   }
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    if (!name.trim() || categoryIds.length === 0) {
+    if (!name.trim() || selected.length === 0) {
       setError('Name and at least one category are required.');
       return;
     }
@@ -42,8 +51,7 @@ export default function AddContactModal({ categories, editing, onClose, onSucces
       linkedin: linkedin.trim() || undefined,
       email: email.trim() || undefined,
       phone: phone.trim() || undefined,
-      category_ids: categoryIds,
-      status,
+      categories: selected,
       notes: notes.split('\n').filter((l) => l.trim()),
     };
 
@@ -106,28 +114,36 @@ export default function AddContactModal({ categories, editing, onClose, onSucces
               Phone
               <input className="modal-input" type="tel" value={phone} onChange={(e) => setPhone(e.target.value)} />
             </label>
-            <label className="modal-label modal-label--checkbox">
-              <input
-                type="checkbox"
-                checked={status === 'potential'}
-                onChange={(e) => setStatus(e.target.checked ? 'potential' : 'actual')}
-              />
-              Potential
-            </label>
           </div>
           <div className="modal-label modal-label--full" style={{ marginTop: '.75rem' }}>
             <span>Categories *</span>
             <div className="category-checkbox-list">
-              {sortedCategories.map((c) => (
-                <label key={c.id} className="category-checkbox-item">
-                  <input
-                    type="checkbox"
-                    checked={categoryIds.includes(c.id)}
-                    onChange={(e) => toggleCategory(c.id, e.target.checked)}
-                  />
-                  {c.name}
-                </label>
-              ))}
+              {sortedCategories.map((c) => {
+                const entry = selected.find((x) => x.id === c.id);
+                const checked = !!entry;
+                return (
+                  <div key={c.id} className="category-checkbox-item">
+                    <label className="category-checkbox-item__label">
+                      <input
+                        type="checkbox"
+                        checked={checked}
+                        onChange={(e) => toggleCategory(c.id, e.target.checked)}
+                      />
+                      {c.name}
+                    </label>
+                    {checked && (
+                      <label className="category-checkbox-item__status">
+                        <input
+                          type="checkbox"
+                          checked={entry!.status === 'potential'}
+                          onChange={(e) => setCategoryStatus(c.id, e.target.checked ? 'potential' : 'actual')}
+                        />
+                        Potential
+                      </label>
+                    )}
+                  </div>
+                );
+              })}
             </div>
           </div>
           <label className="modal-label modal-label--full" style={{ marginTop: '.75rem' }}>

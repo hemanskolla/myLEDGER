@@ -6,16 +6,6 @@ import type { ContactWithNotes } from '../../shared/types.js';
 const router = Router();
 
 function toContact(doc: Record<string, any>): ContactWithNotes {
-  // Support both legacy single category_id and new category_ids array
-  let categoryIds: string[];
-  if (Array.isArray(doc.category_ids)) {
-    categoryIds = doc.category_ids.map((id: ObjectId) => id.toString());
-  } else if (doc.category_id) {
-    categoryIds = [doc.category_id.toString()];
-  } else {
-    categoryIds = [OTHER_CATEGORY_ID.toString()];
-  }
-
   return {
     id: doc._id.toString(),
     name: doc.name,
@@ -25,8 +15,12 @@ function toContact(doc: Record<string, any>): ContactWithNotes {
     linkedin: doc.linkedin ?? null,
     email: doc.email ?? null,
     phone: doc.phone ?? null,
-    category_ids: categoryIds,
-    status: doc.status === 'potential' ? 'potential' : 'actual',
+    categories: (doc.categories ?? [{ id: OTHER_CATEGORY_ID, status: 'actual' }]).map(
+      (c: Record<string, any>) => ({
+        id: c.id.toString(),
+        status: c.status === 'potential' ? 'potential' : 'actual',
+      })
+    ),
     created_at: doc.created_at,
     updated_at: doc.updated_at,
     notes: (doc.notes ?? []).map((n: Record<string, any>) => ({
@@ -44,8 +38,13 @@ function parseNotes(bodies: string[]) {
     .map((body, i) => ({ _id: new ObjectId(), body: body.trim(), position: i }));
 }
 
-function parseCategoryIds(ids: string[]): ObjectId[] {
-  return ids.map((id) => new ObjectId(id));
+function parseCategories(
+  cats: { id: string; status: string }[]
+): { id: ObjectId; status: 'actual' | 'potential' }[] {
+  return cats.map((c) => ({
+    id: new ObjectId(c.id),
+    status: c.status === 'potential' ? 'potential' : 'actual',
+  }));
 }
 
 router.get('/', async (_req, res) => {
@@ -54,10 +53,10 @@ router.get('/', async (_req, res) => {
 });
 
 router.post('/', async (req, res) => {
-  const { name, role, company, where_met, linkedin, email, phone, category_ids, status, notes } = req.body as {
+  const { name, role, company, where_met, linkedin, email, phone, categories, notes } = req.body as {
     name?: string; role?: string; company?: string;
     where_met?: string; linkedin?: string; email?: string; phone?: string;
-    category_ids?: string[]; status?: string; notes?: string[];
+    categories?: { id: string; status: string }[]; notes?: string[];
   };
 
   if (!name?.trim()) {
@@ -65,12 +64,12 @@ router.post('/', async (req, res) => {
     return;
   }
 
-  let catOids: ObjectId[];
-  if (category_ids?.length) {
-    try { catOids = parseCategoryIds(category_ids); }
-    catch { res.status(400).json({ error: 'Invalid category_ids' }); return; }
+  let parsedCats: { id: ObjectId; status: 'actual' | 'potential' }[];
+  if (categories?.length) {
+    try { parsedCats = parseCategories(categories); }
+    catch { res.status(400).json({ error: 'Invalid categories' }); return; }
   } else {
-    catOids = [OTHER_CATEGORY_ID];
+    parsedCats = [{ id: OTHER_CATEGORY_ID, status: 'actual' }];
   }
 
   const now = new Date().toISOString();
@@ -82,8 +81,7 @@ router.post('/', async (req, res) => {
     linkedin: linkedin?.trim() || null,
     email: email?.trim() || null,
     phone: phone?.trim() || null,
-    category_ids: catOids,
-    status: status === 'potential' ? 'potential' : 'actual',
+    categories: parsedCats,
     notes: parseNotes(notes ?? []),
     created_at: now,
     updated_at: now,
@@ -98,20 +96,20 @@ router.put('/:id', async (req, res) => {
   try { oid = new ObjectId(req.params['id']); }
   catch { res.status(404).json({ error: 'Not found' }); return; }
 
-  const { name, role, company, where_met, linkedin, email, phone, category_ids, status, notes } = req.body as {
+  const { name, role, company, where_met, linkedin, email, phone, categories, notes } = req.body as {
     name?: string; role?: string; company?: string;
     where_met?: string; linkedin?: string; email?: string; phone?: string;
-    category_ids?: string[]; status?: string; notes?: string[];
+    categories?: { id: string; status: string }[]; notes?: string[];
   };
 
-  if (!name?.trim() || !category_ids?.length) {
-    res.status(400).json({ error: 'name and category_ids are required' });
+  if (!name?.trim() || !categories?.length) {
+    res.status(400).json({ error: 'name and categories are required' });
     return;
   }
 
-  let catOids: ObjectId[];
-  try { catOids = parseCategoryIds(category_ids); }
-  catch { res.status(400).json({ error: 'Invalid category_ids' }); return; }
+  let parsedCats: { id: ObjectId; status: 'actual' | 'potential' }[];
+  try { parsedCats = parseCategories(categories); }
+  catch { res.status(400).json({ error: 'Invalid categories' }); return; }
 
   const doc = await getDb().collection('contacts').findOneAndUpdate(
     { _id: oid },
@@ -124,12 +122,11 @@ router.put('/:id', async (req, res) => {
         linkedin: linkedin?.trim() || null,
         email: email?.trim() || null,
         phone: phone?.trim() || null,
-        category_ids: catOids,
-        status: status === 'potential' ? 'potential' : 'actual',
+        categories: parsedCats,
         notes: parseNotes(notes ?? []),
         updated_at: new Date().toISOString(),
       },
-      $unset: { category_id: '' },
+      $unset: { category_id: '', category_ids: '', status: '' },
     },
     { returnDocument: 'after' },
   );
