@@ -2,13 +2,14 @@ import type { ContactWithNotes } from '@shared/types';
 
 interface Props {
   contact: ContactWithNotes;
+  status: 'actual' | 'potential';
   onEdit: (contact: ContactWithNotes) => void;
   onDelete: (id: string) => void;
 }
 
-export default function ContactCard({ contact, onEdit, onDelete }: Props) {
+export default function ContactCard({ contact, status, onEdit, onDelete }: Props) {
   return (
-    <div className={`contact-card${contact.status === 'potential' ? ' contact-card--potential' : ''}`}>
+    <div className={`contact-card${status === 'potential' ? ' contact-card--potential' : ''}`}>
       <div className="card-header">
         <div>
           <h3 className="card-name">{contact.name}</h3>

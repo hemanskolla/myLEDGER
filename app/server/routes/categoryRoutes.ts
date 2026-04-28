@@ -80,7 +80,7 @@ router.delete('/:id', async (req, res) => {
   catch { res.status(404).json({ error: 'Not found' }); return; }
 
   const inUse = await getDb().collection('contacts').countDocuments({
-    $or: [{ category_ids: oid }, { category_id: oid }],
+    $or: [{ 'categories.id': oid }, { category_ids: oid }, { category_id: oid }],
   });
   if (inUse > 0) {
     res.status(409).json({ error: 'Cannot delete category with existing contacts' });

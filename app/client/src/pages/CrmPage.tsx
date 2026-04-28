@@ -49,17 +49,17 @@ export default function CrmPage() {
         (c.company ?? '').toLowerCase().includes(q) ||
         (c.role ?? '').toLowerCase().includes(q);
       const matchFilter =
-        activeFilters.size === 0 || c.category_ids.some((id) => activeFilters.has(id));
+        activeFilters.size === 0 || c.categories.some((cat) => activeFilters.has(cat.id));
       return matchSearch && matchFilter;
     });
   }, [contacts, search, activeFilters]);
 
   const grouped = useMemo(() => {
-    const map = new Map<string, ContactWithNotes[]>();
+    const map = new Map<string, { contact: ContactWithNotes; status: 'actual' | 'potential' }[]>();
     for (const c of filtered) {
-      for (const catId of c.category_ids) {
-        if (!map.has(catId)) map.set(catId, []);
-        map.get(catId)!.push(c);
+      for (const cat of c.categories) {
+        if (!map.has(cat.id)) map.set(cat.id, []);
+        map.get(cat.id)!.push({ contact: c, status: cat.status });
       }
     }
     return map;
@@ -107,7 +107,7 @@ export default function CrmPage() {
             <CategorySection
               key={cat.id}
               name={cat.name}
-              contacts={grouped.get(cat.id) ?? []}
+              entries={grouped.get(cat.id) ?? []}
               onEdit={handleEdit}
               onDelete={handleDelete}
             />
