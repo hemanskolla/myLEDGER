@@ -146,7 +146,7 @@ export default function AddContactModal({ categories, editing, onClose, onSucces
                     </select>
 
                     {row.id && (
-                      <label className={`cat-row__potential${row.status === 'potential' ? ' cat-row__potential--on' : ''}`}>
+                      <label className="cat-row__potential">
                         <input
                           type="checkbox"
                           checked={row.status === 'potential'}

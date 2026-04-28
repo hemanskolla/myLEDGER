@@ -403,31 +403,21 @@ a { text-decoration: none; color: inherit; }
   display: inline-flex;
   align-items: center;
   gap: .35rem;
-  font-size: .8rem;
-  font-weight: 500;
-  color: var(--primary-color);
+  font-size: .875rem;
+  font-weight: 400;
+  color: var(--dark-color);
   text-transform: none;
   letter-spacing: 0;
   cursor: pointer;
   white-space: nowrap;
-  padding: .3rem .6rem;
-  border-radius: 5px;
-  border: 1.5px solid var(--border-color);
-  background: var(--white);
-  transition: color .12s, border-color .12s, background .12s;
   user-select: none;
 }
 .cat-row__potential input[type="checkbox"] {
-  width: 13px;
-  height: 13px;
+  width: 14px;
+  height: 14px;
   accent-color: var(--accent-color);
   cursor: pointer;
   flex-shrink: 0;
-}
-.cat-row__potential--on {
-  color: var(--accent-color);
-  border-color: var(--accent-color);
-  background: rgba(187,10,33,.06);
 }
 .cat-row__remove {
   width: 28px;
