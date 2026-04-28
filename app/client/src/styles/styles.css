@@ -370,38 +370,82 @@ a { text-decoration: none; color: inherit; }
 .modal-input:focus { border-color: var(--accent-color); box-shadow: 0 0 0 3px rgba(187,10,33,.1); }
 .modal-textarea { resize: vertical; min-height: 90px; }
 
-/* ── Category multi-select ── */
-.category-checkbox-list {
+/* ── Category row builder ── */
+.cat-field {
   display: flex;
   flex-direction: column;
-  gap: .35rem;
-  max-height: 140px;
-  overflow-y: auto;
-  border: 1.5px solid var(--border-color);
-  border-radius: 6px;
-  padding: .5rem .75rem;
-  background: var(--white);
-  margin-top: .3rem;
+  gap: .5rem;
+  margin-top: .75rem;
 }
-.category-checkbox-item {
+.cat-field__title {
+  font-size: .8rem;
+  font-weight: 600;
+  color: var(--secondary-color);
+  text-transform: uppercase;
+  letter-spacing: .04em;
+}
+.cat-rows {
+  display: flex;
+  flex-direction: column;
+  gap: .45rem;
+}
+.cat-row {
   display: flex;
   align-items: center;
   gap: .5rem;
+}
+.cat-row__select {
+  flex: 1;
+  min-width: 0;
+  cursor: pointer;
+}
+.cat-row__potential {
+  display: inline-flex;
+  align-items: center;
+  gap: .35rem;
   font-size: .875rem;
   font-weight: 400;
+  color: var(--dark-color);
   text-transform: none;
   letter-spacing: 0;
-  color: var(--dark-color);
   cursor: pointer;
-  padding: .1rem 0;
+  white-space: nowrap;
+  user-select: none;
 }
-.category-checkbox-item input[type="checkbox"] {
+.cat-row__potential input[type="checkbox"] {
   width: 14px;
   height: 14px;
   accent-color: var(--accent-color);
   cursor: pointer;
   flex-shrink: 0;
 }
+.cat-row__remove {
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.1rem;
+  line-height: 1;
+  color: var(--primary-color);
+  border-radius: 5px;
+  flex-shrink: 0;
+  transition: color .12s, background .12s;
+}
+.cat-row__remove:hover {
+  color: var(--accent-color);
+  background: rgba(187,10,33,.08);
+}
+.cat-add-btn {
+  align-self: flex-start;
+  font-size: .8rem;
+  font-weight: 600;
+  color: var(--secondary-color);
+  padding: .3rem .1rem;
+  text-decoration: none;
+  transition: color .12s;
+}
+.cat-add-btn:hover { color: var(--accent-color); }
 .modal-error { font-size: .825rem; color: var(--accent-color); background: rgba(187,10,33,.08); padding: .4rem .65rem; border-radius: 5px; }
 .modal-footer { display: flex; justify-content: flex-end; gap: .6rem; margin-top: .25rem; }
 

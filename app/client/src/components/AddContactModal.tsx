@@ -8,6 +8,8 @@ interface Props {
   onSuccess: () => void;
 }
 
+type CategoryRow = { id: string; status: 'actual' | 'potential' };
+
 export default function AddContactModal({ categories, editing, onClose, onSuccess }: Props) {
   const [name, setName] = useState(editing?.name ?? '');
   const [role, setRole] = useState(editing?.role ?? '');
@@ -16,27 +18,32 @@ export default function AddContactModal({ categories, editing, onClose, onSucces
   const [linkedin, setLinkedin] = useState(editing?.linkedin ?? '');
   const [email, setEmail] = useState(editing?.email ?? '');
   const [phone, setPhone] = useState(editing?.phone ?? '');
-  const [selected, setSelected] = useState<{ id: string; status: 'actual' | 'potential' }[]>(
-    editing?.categories ?? []
+  const [rows, setRows] = useState<CategoryRow[]>(
+    editing?.categories.length ? editing.categories : [{ id: '', status: 'actual' }]
   );
   const [notes, setNotes] = useState(editing?.notes.map((n) => n.body).join('\n') ?? '');
   const [error, setError] = useState('');
   const [saving, setSaving] = useState(false);
 
-  function toggleCategory(id: string, checked: boolean) {
-    if (checked) {
-      setSelected((prev) => [...prev, { id, status: 'actual' }]);
-    } else {
-      setSelected((prev) => prev.filter((c) => c.id !== id));
-    }
+  function addRow() {
+    setRows((prev) => [...prev, { id: '', status: 'actual' }]);
   }
 
-  function setCategoryStatus(id: string, status: 'actual' | 'potential') {
-    setSelected((prev) => prev.map((c) => c.id === id ? { ...c, status } : c));
+  function removeRow(idx: number) {
+    setRows((prev) => prev.filter((_, i) => i !== idx));
+  }
+
+  function updateId(idx: number, id: string) {
+    setRows((prev) => prev.map((r, i) => (i === idx ? { ...r, id } : r)));
+  }
+
+  function updateStatus(idx: number, status: 'actual' | 'potential') {
+    setRows((prev) => prev.map((r, i) => (i === idx ? { ...r, status } : r)));
   }
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
+    const selected = rows.filter((r) => r.id);
     if (!name.trim() || selected.length === 0) {
       setError('Name and at least one category are required.');
       return;
@@ -80,6 +87,8 @@ export default function AddContactModal({ categories, editing, onClose, onSucces
     return 0;
   });
 
+  const takenIds = new Set(rows.map((r) => r.id).filter(Boolean));
+
   return (
     <div className="modal-backdrop" onClick={onClose}>
       <dialog className="modal modal--wide" open onClick={(e) => e.stopPropagation()}>
@@ -115,37 +124,60 @@ export default function AddContactModal({ categories, editing, onClose, onSucces
               <input className="modal-input" type="tel" value={phone} onChange={(e) => setPhone(e.target.value)} />
             </label>
           </div>
-          <div className="modal-label modal-label--full" style={{ marginTop: '.75rem' }}>
-            <span>Categories *</span>
-            <div className="category-checkbox-list">
-              {sortedCategories.map((c) => {
-                const entry = selected.find((x) => x.id === c.id);
-                const checked = !!entry;
+
+          <div className="cat-field">
+            <span className="cat-field__title">Categories *</span>
+            <div className="cat-rows">
+              {rows.map((row, idx) => {
+                const availableOptions = sortedCategories.filter(
+                  (c) => c.id === row.id || !takenIds.has(c.id)
+                );
                 return (
-                  <div key={c.id} className="category-checkbox-item">
-                    <label className="category-checkbox-item__label">
-                      <input
-                        type="checkbox"
-                        checked={checked}
-                        onChange={(e) => toggleCategory(c.id, e.target.checked)}
-                      />
-                      {c.name}
-                    </label>
-                    {checked && (
-                      <label className="category-checkbox-item__status">
+                  <div key={idx} className="cat-row">
+                    <select
+                      className="modal-input cat-row__select"
+                      value={row.id}
+                      onChange={(e) => updateId(idx, e.target.value)}
+                    >
+                      <option value="">Select category…</option>
+                      {availableOptions.map((c) => (
+                        <option key={c.id} value={c.id}>{c.name}</option>
+                      ))}
+                    </select>
+
+                    {row.id && (
+                      <label className="cat-row__potential">
                         <input
                           type="checkbox"
-                          checked={entry!.status === 'potential'}
-                          onChange={(e) => setCategoryStatus(c.id, e.target.checked ? 'potential' : 'actual')}
+                          checked={row.status === 'potential'}
+                          onChange={(e) => updateStatus(idx, e.target.checked ? 'potential' : 'actual')}
                         />
                         Potential
                       </label>
+                    )}
+
+                    {rows.length > 1 && (
+                      <button
+                        type="button"
+                        className="cat-row__remove"
+                        onClick={() => removeRow(idx)}
+                        aria-label="Remove category"
+                      >
+                        ×
+                      </button>
                     )}
                   </div>
                 );
               })}
             </div>
+
+            {rows.length < sortedCategories.length && (
+              <button type="button" className="cat-add-btn" onClick={addRow}>
+                + Add another category
+              </button>
+            )}
           </div>
+
           <label className="modal-label modal-label--full" style={{ marginTop: '.75rem' }}>
             Notes (one bullet per line)
             <textarea
