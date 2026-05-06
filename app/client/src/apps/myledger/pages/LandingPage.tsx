@@ -1,13 +1,17 @@
+// UNUSED - kept for future Google OAuth integration.
+// When auth is re-enabled, wire this back into App.tsx as the route for unauthenticated users
+// and wrap protected routes with ProtectedRoute. The backend /api/auth/* routes already exist.
+
 import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useAuth } from '../context/AuthContext';
+import { useAuth } from '../../../context/AuthContext';
 
 export default function LandingPage() {
   const { user, loading } = useAuth();
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (!loading && user) navigate('/crm', { replace: true });
+    if (!loading && user) navigate('/myledger', { replace: true });
   }, [user, loading, navigate]);
 
   const error = new URLSearchParams(window.location.search).get('error');

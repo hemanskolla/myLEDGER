@@ -1,6 +1,11 @@
+// UNUSED - kept for future Google OAuth integration.
+// To re-enable auth: wrap <App /> in <AuthProvider> in main.tsx,
+// use ProtectedRoute around guarded routes in App.tsx,
+// and wire LandingPage.tsx as the unauthenticated entry point.
+
 import { createContext, useContext, useEffect, useState } from 'react';
 import type { ReactNode } from 'react';
-import type { AuthUser } from '@shared/types';
+import type { AuthUser } from '@shared/types/auth';
 
 interface AuthContextValue {
   user: AuthUser | null;

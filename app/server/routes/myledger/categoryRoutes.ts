@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import { ObjectId } from 'mongodb';
-import { getDb, OTHER_CATEGORY_ID } from '../db.js';
+import { getDb, OTHER_CATEGORY_ID } from '../../db.js';
 
 const router = Router();
 
