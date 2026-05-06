@@ -13,9 +13,10 @@
 
 /* ── Search ── */
 .search-bar { max-width: 480px; }
+.search-bar__inner { position: relative; display: flex; align-items: center; }
 .search-input {
   width: 100%;
-  padding: .6rem 1rem;
+  padding: .6rem 2.2rem .6rem 1rem;
   border: 1.5px solid var(--border-color);
   border-radius: 24px;
   font-size: .9rem;
@@ -24,12 +25,30 @@
   color: var(--dark-color);
   transition: border-color .15s, box-shadow .15s;
 }
+.search-input::-webkit-search-cancel-button { display: none; }
+.search-input::-ms-clear { display: none; }
 .search-input:focus {
   border-color: var(--accent-color);
   background: var(--white);
   box-shadow: 0 0 0 3px rgba(187,10,33,.1);
 }
 .search-input::placeholder { color: var(--primary-color); }
+.search-clear {
+  position: absolute;
+  right: .6rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: none;
+  color: var(--primary-color);
+  padding: 0;
+  transition: color .12s, background .12s;
+}
+.search-clear svg { width: 14px; height: 14px; }
+.search-clear:hover { color: var(--accent-color); background: rgba(187,10,33,.08); }
 
 /* ── Filter bar ── */
 .filter-bar { display: flex; flex-wrap: wrap; gap: .4rem; }
