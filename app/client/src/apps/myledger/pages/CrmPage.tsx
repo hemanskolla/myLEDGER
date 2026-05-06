@@ -1,5 +1,7 @@
+import '../styles/myledger.css';
 import { useEffect, useMemo, useState } from 'react';
-import type { Category, ContactWithNotes } from '@shared/types';
+import type { Category, ContactWithNotes } from '@shared/types/myledger';
+import Header from '../../../components/Header';
 import SearchBar from '../components/SearchBar';
 import FilterBar from '../components/FilterBar';
 import CategorySection from '../components/CategorySection';
@@ -20,8 +22,8 @@ export default function CrmPage() {
   async function reload(retries = 8): Promise<void> {
     try {
       const [cs, cats] = await Promise.all([
-        fetch('/api/contacts').then((r) => { if (!r.ok) throw new Error(String(r.status)); return r.json() as Promise<ContactWithNotes[]>; }),
-        fetch('/api/categories').then((r) => { if (!r.ok) throw new Error(String(r.status)); return r.json() as Promise<Category[]>; }),
+        fetch('/api/myledger/contacts').then((r) => { if (!r.ok) throw new Error(String(r.status)); return r.json() as Promise<ContactWithNotes[]>; }),
+        fetch('/api/myledger/categories').then((r) => { if (!r.ok) throw new Error(String(r.status)); return r.json() as Promise<Category[]>; }),
       ]);
       setContacts(cs);
       setCategories(cats);
@@ -67,7 +69,7 @@ export default function CrmPage() {
 
   async function handleDelete(id: string) {
     if (!confirm('Delete this contact?')) return;
-    await fetch(`/api/contacts/${id}`, { method: 'DELETE' });
+    await fetch(`/api/myledger/contacts/${id}`, { method: 'DELETE' });
     void reload();
   }
 
@@ -78,9 +80,7 @@ export default function CrmPage() {
 
   return (
     <div className="crm-layout">
-      <header className="crm-header">
-        <span className="crm-logo">myLEDGER</span>
-      </header>
+      <Header />
 
       <div className="crm-toolbar">
         <SearchBar value={search} onChange={setSearch} />
@@ -91,7 +91,7 @@ export default function CrmPage() {
           onClearAll={() => setActiveFilters(new Set())}
           onReorder={(newOrder) => {
             setCategories(newOrder);
-            void fetch('/api/categories/order', {
+            void fetch('/api/myledger/categories/order', {
               method: 'PUT',
               headers: { 'Content-Type': 'application/json' },
               body: JSON.stringify({ order: newOrder.map((c) => c.id) }),

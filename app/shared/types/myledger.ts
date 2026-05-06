@@ -28,9 +28,3 @@ export interface Contact {
 export interface ContactWithNotes extends Contact {
   notes: Note[];
 }
-
-export interface AuthUser {
-  email: string;
-  name: string;
-  picture: string;
-}

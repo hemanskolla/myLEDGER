@@ -14,7 +14,7 @@ import {
   arrayMove,
 } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
-import type { Category } from '@shared/types';
+import type { Category } from '@shared/types/myledger';
 
 interface Props {
   categories: Category[];

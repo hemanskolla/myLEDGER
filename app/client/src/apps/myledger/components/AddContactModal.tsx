@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import type { Category, ContactWithNotes } from '@shared/types';
+import type { Category, ContactWithNotes } from '@shared/types/myledger';
 
 interface Props {
   categories: Category[];
@@ -62,7 +62,7 @@ export default function AddContactModal({ categories, editing, onClose, onSucces
       notes: notes.split('\n').filter((l) => l.trim()),
     };
 
-    const url = editing ? `/api/contacts/${editing.id}` : '/api/contacts';
+    const url = editing ? `/api/myledger/contacts/${editing.id}` : '/api/myledger/contacts';
     const method = editing ? 'PUT' : 'POST';
 
     const res = await fetch(url, {

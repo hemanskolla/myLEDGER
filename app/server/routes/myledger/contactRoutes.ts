@@ -1,7 +1,7 @@
 import { Router } from 'express';
 import { ObjectId } from 'mongodb';
-import { getDb, OTHER_CATEGORY_ID } from '../db.js';
-import type { ContactWithNotes } from '../../shared/types.js';
+import { getDb, OTHER_CATEGORY_ID } from '../../db.js';
+import type { ContactWithNotes } from '../../../shared/types/myledger.js';
 
 const router = Router();
 

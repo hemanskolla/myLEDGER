@@ -3,8 +3,8 @@ import dotenv from 'dotenv';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import { connect } from './db.js';
-import categoryRoutes from './routes/categoryRoutes.js';
-import contactRoutes from './routes/contactRoutes.js';
+import categoryRoutes from './routes/myledger/categoryRoutes.js';
+import contactRoutes from './routes/myledger/contactRoutes.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 dotenv.config({ path: path.resolve(__dirname, '../.env') });
@@ -19,8 +19,8 @@ app.use('/api', (_req, res, next) => {
   next();
 });
 
-app.use('/api/categories', categoryRoutes);
-app.use('/api/contacts', contactRoutes);
+app.use('/api/myledger/categories', categoryRoutes);
+app.use('/api/myledger/contacts', contactRoutes);
 
 const distPath = path.join(__dirname, '../client/dist');
 app.use(express.static(distPath));

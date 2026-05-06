@@ -1,4 +1,4 @@
-import type { ContactWithNotes } from '@shared/types';
+import type { ContactWithNotes } from '@shared/types/myledger';
 
 interface Props {
   contact: ContactWithNotes;

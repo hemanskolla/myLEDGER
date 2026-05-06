@@ -15,7 +15,7 @@ export default function AddCategoryModal({ onClose, onSuccess }: Props) {
     e.preventDefault();
     if (!name.trim()) return;
     setSaving(true);
-    const res = await fetch('/api/categories', {
+    const res = await fetch('/api/myledger/categories', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ name: name.trim() }),
