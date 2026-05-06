@@ -3,7 +3,7 @@ import { NavLink } from 'react-router-dom';
 export default function Header() {
   return (
     <header className="site-header">
-      <span className="site-brand">hkquantum-tools</span>
+      <NavLink to="/" className="site-brand">hkquantum-tools</NavLink>
       <nav className="site-nav">
         <NavLink
           to="/myledger"
