@@ -10,7 +10,7 @@ export async function connect() {
 
   const client = new MongoClient(uri);
   await client.connect();
-  _db = client.db(process.env.DB_NAME ?? 'ledger-db');
+  _db = client.db(process.env.MYLEDGER_DB_NAME ?? 'ledger-db');
 
   await _db.collection('categories').createIndex({ name: 1 }, { unique: true });
 
