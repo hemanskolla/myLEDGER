@@ -12,15 +12,15 @@ export async function connect() {
   await client.connect();
   _ledger_db = client.db(process.env.MYLEDGER_DB_NAME);
 
-  await _db.collection('categories').createIndex({ name: 1 }, { unique: true });
+  await _ledger_db.collection('categories').createIndex({ name: 1 }, { unique: true });
 
   // Step 1: scalar category_id → category_ids array
-  const legacyScalar = await _db.collection('contacts')
+  const legacyScalar = await _ledger_db.collection('contacts')
     .find({ category_id: { $exists: true }, category_ids: { $exists: false } })
     .project({ _id: 1, category_id: 1 })
     .toArray();
   if (legacyScalar.length > 0) {
-    await _db.collection('contacts').bulkWrite(
+    await _ledger_db.collection('contacts').bulkWrite(
       legacyScalar.map((doc) => ({
         updateOne: {
           filter: { _id: doc._id },
@@ -31,12 +31,12 @@ export async function connect() {
   }
 
   // Step 2: category_ids array + status → categories: [{id, status}]
-  const legacyArray = await _db.collection('contacts')
+  const legacyArray = await _ledger_db.collection('contacts')
     .find({ category_ids: { $exists: true }, categories: { $exists: false } })
     .project({ _id: 1, category_ids: 1, status: 1 })
     .toArray();
   if (legacyArray.length > 0) {
-    await _db.collection('contacts').bulkWrite(
+    await _ledger_db.collection('contacts').bulkWrite(
       legacyArray.map((doc) => ({
         updateOne: {
           filter: { _id: doc._id },
