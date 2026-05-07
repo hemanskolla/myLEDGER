@@ -1,6 +1,6 @@
 import { MongoClient, Db, ObjectId } from 'mongodb';
 
-let _db!: Db;
+let _ledger_db!: Db;
 
 export const OTHER_CATEGORY_ID = new ObjectId('69ed71237ba869aee9620036');
 
@@ -10,7 +10,7 @@ export async function connect() {
 
   const client = new MongoClient(uri);
   await client.connect();
-  _db = client.db(process.env.DB_NAME ?? 'ledger-db');
+  _ledger_db = client.db(process.env.MYLEDGER_DB_NAME);
 
   await _db.collection('categories').createIndex({ name: 1 }, { unique: true });
 
@@ -56,5 +56,5 @@ export async function connect() {
 }
 
 export function getDb(): Db {
-  return _db;
+  return _ledger_db;
 }
